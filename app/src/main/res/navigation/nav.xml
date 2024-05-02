@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress NavigationFile -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/homeFragment2">
+
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.example.pexelsapp.presentation.fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment2_to_detailsFragment22"
+            app:destination="@id/detailsFragment2"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@animator/slide_out_left" >
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment2"
+        android:name="com.example.pexelsapp.presentation.fragments.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details">
+        <action
+            android:id="@+id/action_detailsFragment2_to_homeFragment22"
+            app:destination="@id/homeFragment2"
+            app:enterAnim="@animator/slide_in_left"
+            app:exitAnim="@animator/slide_out_right" />
+        <action
+            android:id="@+id/action_detailsFragment2_to_bookmarksFragment"
+            app:destination="@id/bookmarksFragment"
+            app:enterAnim="@animator/slide_in_left"
+            app:exitAnim="@animator/slide_out_right"  />
+        <argument
+            android:name="photographer"
+            app:argType="string" />
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
+        <argument
+            android:name="liked"
+            app:argType="boolean" />
+        <argument
+            android:name="photoId"
+            app:argType="integer" />
+        <argument
+            android:name="dest"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookmarksFragment"
+        android:name="com.example.pexelsapp.presentation.fragments.BookmarksFragment"
+        android:label="fragment_bookmarks"
+        tools:layout="@layout/fragment_bookmarks" >
+        <action
+            android:id="@+id/action_bookmarksFragment_to_detailsFragment2"
+            app:destination="@id/detailsFragment2"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@animator/slide_out_left" />
+        <action
+            android:id="@+id/action_bookmarksFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@animator/slide_out_left" />
+    </fragment>
+</navigation>

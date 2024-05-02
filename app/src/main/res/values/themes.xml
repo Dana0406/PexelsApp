@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PexelsApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/gray</item>
+        <item name="font">@font/mulish_regular</item>
+    </style>
+
+    <style name="Theme.PexelsApp" parent="Base.Theme.PexelsApp" />
+
+    <style name="SplashScreenTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@mipmap/splash_logo</item>
+        <item name="android:windowBackground">@color/red</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.PexelsApp</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/splash_logo</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="TextAppearance.Material3.SearchView.Prefix">
+        <item name="android:background">@drawable/search_view_background</item>
+        <item name="android:textColorHint">@color/dark_grey</item>
+    </style>
+
+    <style name="ProgressBarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/red</item>
+        <item name="android:progressDrawable">@drawable/rounded_progress_drawable</item>
+    </style>
+
+</resources>
