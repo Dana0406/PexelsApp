@@ -156,7 +156,7 @@ class HomeFragment : Fragment() {
                         },
                         Constants.SEARCH_PHOTOS
                     )
-                }else {
+                } else {
                     viewModel.getCuratedPhotos()
                     observeLiveData(
                         viewModel.curatedPhotosLiveData,

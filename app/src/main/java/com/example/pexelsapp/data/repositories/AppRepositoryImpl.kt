@@ -8,10 +8,9 @@ import com.example.pexelsapp.data.models.DBPhoto
 import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.retrofir.PhotoApi
 import com.example.pexelsapp.domain.models.FeaturedResponse
-import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.domain.models.PhotoResponse
 import com.example.pexelsapp.domain.repository.AppRepository
-import retrofit2.Call
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,17 +35,17 @@ class AppRepositoryImpl @Inject constructor(
 
     override fun getAllPhotos(): LiveData<List<DBPhoto>> = photoDao.getAllPhotos()
 
-    override suspend fun getPhotoById(id: Int): Call<NetworkPhoto> = photoApi.getPhotoById(id)
+    override suspend fun getPhotoById(id: Int): Response<NetworkPhoto> = photoApi.getPhotoById(id)
 
-    override suspend fun getCuratedPhotos(page: Int, perPage: Int): Call<PhotoResponse> =
+    override suspend fun getCuratedPhotos(page: Int, perPage: Int): Response<PhotoResponse> =
         photoApi.getCuratedPhotos(page, perPage)
 
-    override suspend fun getFeaturedCollection(page: Int, perPage: Int): Call<FeaturedResponse> =
+    override suspend fun getFeaturedCollection(page: Int, perPage: Int): Response<FeaturedResponse> =
         photoApi.getFeaturedCollection(page, perPage)
 
     override suspend fun getPhotosBySearch(
         query: String,
         page: Int,
         perPage: Int
-    ): Call<PhotoResponse> = photoApi.getPhotosBySearch(query, page, perPage)
+    ): Response<PhotoResponse> = photoApi.getPhotosBySearch(query, page, perPage)
 }

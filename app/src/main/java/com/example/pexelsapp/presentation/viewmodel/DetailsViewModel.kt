@@ -13,10 +13,12 @@ import com.example.pexelsapp.domain.usecases.DeletePhotoUseCase
 import com.example.pexelsapp.domain.usecases.GetPhotoByIdUseCase
 import com.example.pexelsapp.domain.usecases.SavePhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,20 +32,18 @@ class DetailsViewModel @Inject constructor(
 
     fun getPhotoDetail(id: Int) {
         viewModelScope.launch {
-            val call: Call<NetworkPhoto> = getPhotoByIdUseCase.execute(id)
-            call.enqueue(object : Callback<NetworkPhoto> {
-                override fun onResponse(call: Call<NetworkPhoto>, response: Response<NetworkPhoto>) {
-                    if (response.isSuccessful) {
-                        photoDetailLiveData.value = response.body()
-                    } else {
-                        return
-                    }
+            try {
+                val response: Response<NetworkPhoto> = coroutineScope {
+                    getPhotoByIdUseCase.execute(id)
                 }
-
-                override fun onFailure(call: Call<NetworkPhoto>, t: Throwable) {
-                    Log.d("DetailFragment", t.message.toString())
+                if (response.isSuccessful) {
+                    photoDetailLiveData.value = response.body()
+                } else {
+                    Log.d("DetailFragment", "Error")
                 }
-            })
+            } catch (e: IOException) {
+                Log.d("DetailFragment", e.message.toString())
+            }
         }
     }
 

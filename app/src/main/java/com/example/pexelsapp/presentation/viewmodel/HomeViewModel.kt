@@ -17,10 +17,12 @@ import com.example.pexelsapp.domain.usecases.GetCuratedPhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetFeaturedCollectionUseCase
 import com.example.pexelsapp.domain.usecases.GetPhotosBySearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,78 +35,60 @@ class HomeViewModel @Inject constructor(
 
     private val _errorLiveData = MutableLiveData<String>()
     val errorLiveData: LiveData<String> = _errorLiveData
-    var curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
-    var featuredLiveData = MutableLiveData<List<Featured>>()
-    var bookmarkLiveData = getAllPhotosUseCase.execute()
-    var searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
+    val curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
+    val featuredLiveData = MutableLiveData<List<Featured>>()
+    val bookmarkLiveData = getAllPhotosUseCase.execute()
+    val searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
 
     fun getCuratedPhotos() {
         viewModelScope.launch {
-            val call: Call<PhotoResponse> = getCuratedPhotosUseCase.execute(1, 30)
-            call.enqueue(object : Callback<PhotoResponse> {
-                override fun onResponse(
-                    call: Call<PhotoResponse>,
-                    response: Response<PhotoResponse>
-                ) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        curatedPhotosLiveData.value = responseBody.photos
-                    } else {
-                        return
-                    }
+            try {
+                val response: Response<PhotoResponse> = coroutineScope {
+                    getCuratedPhotosUseCase.execute(1, 30)
                 }
-
-                override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                    _errorLiveData.postValue("Request failed: ${t.message}")
-                    Log.d("HomeFragment", t.message.toString())
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    curatedPhotosLiveData.value = responseBody.photos
+                } else {
+                    Log.d("HomeFragment", "Error")
                 }
-            })
+            } catch (e: IOException) {
+                Log.d("HomeFragment", e.message.toString())
+            }
         }
     }
 
     fun getFeatured() {
         viewModelScope.launch {
-            val call: Call<FeaturedResponse> = getFeaturedCollectionUseCase.execute(1, 7)
-            call.enqueue(object : Callback<FeaturedResponse> {
-                override fun onResponse(
-                    call: Call<FeaturedResponse>,
-                    response: Response<FeaturedResponse>
-                ) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        featuredLiveData.value = responseBody.collections
-                    } else {
-                        return
-                    }
+            try {
+                val response: Response<FeaturedResponse> = coroutineScope {
+                    getFeaturedCollectionUseCase.execute(1, 7)
                 }
-
-                override fun onFailure(call: Call<FeaturedResponse>, t: Throwable) {
-                    Log.d("HomeFragment", t.message.toString())
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    featuredLiveData.value = responseBody.collections
+                } else {
+                    Log.d("HomeFragment", "Error")
                 }
-            })
+            } catch (e: IOException) {
+                Log.d("HomeFragment", e.message.toString())
+            }
         }
     }
 
     fun searchPhotos(searchQuery: String) {
         viewModelScope.launch {
-            val call: Call<PhotoResponse> = getPhotosBySearchUseCase.execute(searchQuery, 1, 30)
-            call.enqueue(
-                object : Callback<PhotoResponse> {
-                    override fun onResponse(
-                        call: Call<PhotoResponse>,
-                        response: Response<PhotoResponse>
-                    ) {
-                        val photoList = response.body()?.photos
-                        photoList?.let {
-                            searchPhotosLiveData.postValue(it)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                        Log.d("HomeFragment", t.message.toString())
-                    }
+            try {
+                val response: Response<PhotoResponse> = coroutineScope {
+                    getPhotosBySearchUseCase.execute(searchQuery, 1, 30)
                 }
-            )
+                val photoList = response.body()?.photos
+                photoList?.let {
+                    searchPhotosLiveData.postValue(it)
+                }
+            } catch (e: IOException) {
+                Log.d("HomeFragment", e.message.toString())
+            }
         }
     }
 }
