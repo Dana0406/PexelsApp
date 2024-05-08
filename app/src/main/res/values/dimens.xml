@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="grid_spacing">17dp</dimen>
+    <dimen name="bottom_nav_height">64dp</dimen>
+    <dimen name="photo_image_bottom_padding">15dp</dimen>
+    <dimen name="featured_item_left_right_padding">20dp</dimen>
+    <dimen name="featured_item_top_bottom_padding">10dp</dimen>
+    <dimen name="featured_item_margin_end">11dp</dimen>
+    <dimen name="featured_item_height">38dp</dimen>
+    <dimen name="featured_rv_height">39dp</dimen>
+    <dimen name="featured_rv_top_margin">24dp</dimen>
+    <dimen name="fragment_end_start_margin">24dp</dimen>
+    <dimen name="bookmark_rec_view_top_margin">38dp</dimen>
+    <dimen name="home_rec_view_top_margin">24dp</dimen>
+    <dimen name="rec_view_end_margin">-15dp</dimen>
+    <dimen name="explore_button_top_margin">12dp</dimen>
+    <dimen name="details_top_bar_layout_top_margin">17dp</dimen>
+    <dimen name="progress_bar_top_margin">12dp</dimen>
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_view_top_margin">29dp</dimen>
+    <dimen name="bookmark_card_view_end_margin">15dp</dimen>
+    <dimen name="search_view_top_margin">12dp</dimen>
+    <dimen name="progress_bar_height">4dp</dimen>
+    <dimen name="bookmark_text_height">33dp</dimen>
+    <dimen name="image_item_top_margin">12dp</dimen>
 </resources>

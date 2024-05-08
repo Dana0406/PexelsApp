@@ -32,7 +32,7 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun deletePhoto(photo: DBPhoto) {
         photoDao.deletePhoto(photo)
     }
-    
+
     override suspend fun getAllPhotos(): List<DBPhoto> = photoDao.getAllPhotos()
 
     override suspend fun getPhotoById(id: Int): Response<NetworkPhoto> = photoApi.getPhotoById(id)
