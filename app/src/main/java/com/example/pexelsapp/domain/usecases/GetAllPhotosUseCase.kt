@@ -7,5 +7,5 @@ import com.example.pexelsapp.domain.repository.AppRepository
 
 class GetAllPhotosUseCase(private val appRepository: AppRepository) {
 
-    fun execute(): LiveData<List<DBPhoto>> = appRepository.getAllPhotos()
+    suspend fun execute(): List<DBPhoto> = appRepository.getAllPhotos()
 }

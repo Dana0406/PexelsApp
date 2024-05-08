@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     val errorLiveData: LiveData<String> = _errorLiveData
     val curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
     val featuredLiveData = MutableLiveData<List<Featured>>()
-    val bookmarkLiveData = getAllPhotosUseCase.execute()
+    val bookmarkLiveData = MutableLiveData<List<DBPhoto>>()
     val searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
 
     fun getCuratedPhotos() {
@@ -86,6 +86,16 @@ class HomeViewModel @Inject constructor(
                 photoList?.let {
                     searchPhotosLiveData.postValue(it)
                 }
+            } catch (e: IOException) {
+                Log.d("HomeFragment", e.message.toString())
+            }
+        }
+    }
+
+    fun getAllPhotos(){
+        viewModelScope.launch {
+            try {
+                bookmarkLiveData.value = getAllPhotosUseCase.execute()
             } catch (e: IOException) {
                 Log.d("HomeFragment", e.message.toString())
             }

@@ -20,5 +20,5 @@ interface PhotoDao {
     suspend fun deletePhoto(photo: DBPhoto)
 
     @Query(Constants.SELECT_ALL)
-    fun getAllPhotos(): LiveData<List<DBPhoto>>
+    suspend fun getAllPhotos(): List<DBPhoto>
 }

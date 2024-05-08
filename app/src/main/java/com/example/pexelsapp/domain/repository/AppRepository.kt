@@ -14,7 +14,7 @@ interface AppRepository {
     suspend fun downloadImage(imageUrl: String, context: Context)
     suspend fun savePhoto(photo: DBPhoto)
     suspend fun deletePhoto(photo: DBPhoto)
-    fun getAllPhotos(): LiveData<List<DBPhoto>>
+    suspend fun getAllPhotos(): List<DBPhoto>
     suspend fun getPhotoById(id: Int): Response<NetworkPhoto>
     suspend fun getCuratedPhotos(page: Int, perPage: Int): Response<PhotoResponse>
     suspend fun getFeaturedCollection(page: Int, perPage: Int): Response<FeaturedResponse>

@@ -45,6 +45,7 @@ class BookmarksFragment : Fragment() {
         bookmarkPhotosAdapter = BookmarkItemAdapter()
 
         prepareCuratedPhotosRecyclerView()
+        viewModel.getAllPhotos()
         observeBookmarkLiveData()
         bookmarksPhotoClicked()
         exploreClicked()
