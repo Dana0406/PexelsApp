@@ -1,13 +1,11 @@
-package com.example.pexelsapp.domain.models
+package com.example.pexelsapp.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.example.pexelsapp.data.db.PhotoTypeConverter
-import kotlinx.parcelize.Parcelize
-
-data class Photo(
+import com.example.pexelsapp.domain.models.PhotoSource
+@Entity(tableName = "photo_information")
+data class DBPhoto(
+    @PrimaryKey
     val id: Int,
     val width: Int?,
     val height: Int?,

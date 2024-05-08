@@ -9,16 +9,15 @@ import javax.inject.Singleton
 
 @TypeConverters
 @Singleton
-class PhotoTypeConverter @Inject constructor(){
+class PhotoTypeConverter @Inject constructor() {
+
     private val gson = Gson()
+    /*@Inject
+    lateinit var gson: Gson*/
 
     @TypeConverter
-    fun fromPhotoSource(photoSource: PhotoSource): String {
-        return gson.toJson(photoSource)
-    }
+    fun fromPhotoSource(photoSource: PhotoSource): String = gson.toJson(photoSource)
 
     @TypeConverter
-    fun toPhotoSource(json: String): PhotoSource {
-        return gson.fromJson(json, PhotoSource::class.java)
-    }
+    fun toPhotoSource(json: String): PhotoSource = gson.fromJson(json, PhotoSource::class.java)
 }

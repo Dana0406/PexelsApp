@@ -11,24 +11,23 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pexelsapp.R
+import com.example.pexelsapp.data.models.DBPhoto
+import com.example.pexelsapp.databinding.ActivityMainBinding
 import com.example.pexelsapp.databinding.FragmentBookmarksBinding
 import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.presentation.adapters.BookmarkItemAdapter
+import com.example.pexelsapp.presentation.utils.Constants
 import com.example.pexelsapp.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BookmarksFragment  : Fragment() {
-    private lateinit var binding: FragmentBookmarksBinding
-    private lateinit var detailPhoto: Photo
-    private val viewModel: HomeViewModel by viewModels()
-    @Inject
-    lateinit var bookmarkPhotosAdapter: BookmarkItemAdapter
+class BookmarksFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var binding: FragmentBookmarksBinding
+    private lateinit var bookmarkPhotosAdapter: BookmarkItemAdapter
+    private val viewModel: HomeViewModel by viewModels()
+    private var detailPhoto: DBPhoto? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +42,7 @@ class BookmarksFragment  : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bookmarkPhotosAdapter = BookmarkItemAdapter()
 
         prepareCuratedPhotosRecyclerView()
         observeBookmarkLiveData()
@@ -59,9 +59,8 @@ class BookmarksFragment  : Fragment() {
     }
 
     private fun setFragmentDetails() {
-        val rootView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
-        val elementToChangeVisibility = rootView.findViewById<View>(R.id.bottomNavigationView)
-        elementToChangeVisibility.visibility = View.VISIBLE
+        val visibilityChangeListener = requireActivity() as? VisibilityChangeListener
+        visibilityChangeListener?.changeVisibility(View.VISIBLE)
     }
 
     private fun prepareCuratedPhotosRecyclerView() {
@@ -76,13 +75,13 @@ class BookmarksFragment  : Fragment() {
             detailPhoto = photo
             val navController = requireActivity().findNavController(R.id.fragmentContainerView)
             val action = photo.src?.let {
-                photo.liked?.let { it1 ->
+                photo.liked?.let { flag ->
                     BookmarksFragmentDirections.actionBookmarksFragmentToDetailsFragment2(
                         photo.photographer.toString(),
                         it.medium,
-                        it1,
+                        flag,
                         photo.id,
-                        "bookmark"
+                        Constants.DEST_BOOKMARK
                     )
                 }
             }
@@ -94,16 +93,12 @@ class BookmarksFragment  : Fragment() {
 
     private fun observeBookmarkLiveData() {
         viewModel.observeBookmarkLiveData().observe(viewLifecycleOwner, Observer { photos ->
-            bookmarkPhotosAdapter.setPhotos(photosList = photos as ArrayList<Photo>)
+            bookmarkPhotosAdapter.setPhotos(photosList = photos as ArrayList<DBPhoto>)
             if (photos.isEmpty()) {
                 binding.anythingHaventSaved.visibility = View.VISIBLE
             } else {
                 binding.anythingHaventSaved.visibility = View.INVISIBLE
             }
-            photos.forEach {
-                Log.d("test", it.id.toString())
-            }
         })
     }
-
 }

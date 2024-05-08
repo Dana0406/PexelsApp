@@ -14,8 +14,10 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.pexelsapp.R
 import com.example.pexelsapp.databinding.FragmentDetailsBinding
+import com.example.pexelsapp.presentation.converters.ModelConverter
 import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.domain.usecases.DownloadImageUseCase
+import com.example.pexelsapp.presentation.utils.Constants
 import com.example.pexelsapp.presentation.viewmodel.DetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -23,20 +25,15 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
+
     private lateinit var binding: FragmentDetailsBinding
     private val args: DetailsFragmentArgs by navArgs()
     private val detailsMvvm: DetailsViewModel by viewModels()
     private var photoToSave: Photo? = null
-
     @Inject
     lateinit var imageDownloader: ImageDownloader
-
     @Inject
     lateinit var downloadImageUseCase: DownloadImageUseCase
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +44,6 @@ class DetailsFragment : Fragment() {
         loadingCase()
         detailsMvvm.getPhotoDetail(args.photoId)
         observePhotoDetailsLiveData()
-
         setFragmentDetails()
 
         return binding.root
@@ -68,7 +64,6 @@ class DetailsFragment : Fragment() {
             } else {
                 navigateTo(R.id.action_detailsFragment2_to_bookmarksFragment)
             }
-
         }
     }
 
@@ -82,19 +77,23 @@ class DetailsFragment : Fragment() {
             if (photoToSave?.liked == false) {
                 photoToSave?.let {
                     it.liked = true
-                    detailsMvvm.insertPhoto(it)
+                    detailsMvvm.insertPhoto(ModelConverter.photoToDBPhoto(it))
                 }
                 binding.addToBookmarkButton.setImageResource(R.drawable.bookmark_button_active)
-                Toast.makeText(context, "Photo was saved. Press again to unsave", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    context,
+                    Constants.IMAGE_SAVED_MESSAGE,
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             } else {
                 photoToSave?.let {
                     it.liked = false
-                    detailsMvvm.deletePhoto(it)
+                    detailsMvvm.deletePhoto(ModelConverter.photoToDBPhoto(it))
                 }
 
                 binding.addToBookmarkButton.setImageResource(R.drawable.bookmark_button_inactive)
-                Toast.makeText(context, "Photo was unsaved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, Constants.IMAGE_UNSAVED_MESSAGE, Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -104,7 +103,7 @@ class DetailsFragment : Fragment() {
         binding.downloadButton.setOnClickListener {
             val imageUrl = args.photoUrl
             lifecycleScope.launch {
-                val bitmap = downloadImageUseCase(imageUrl)
+                downloadImageUseCase(imageUrl, requireContext())
             }
         }
     }
@@ -113,11 +112,10 @@ class DetailsFragment : Fragment() {
         val photographer = args.photographer
         val photo = args.photoUrl
 
-        val rootView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
-        val elementToChangeVisibility = rootView.findViewById<View>(R.id.bottomNavigationView)
-        elementToChangeVisibility.visibility = View.INVISIBLE
+        val visibilityChangeListener = requireActivity() as? VisibilityChangeListener
+        visibilityChangeListener?.changeVisibility(View.INVISIBLE)
 
-        if (args.dest == "home") {
+        if (args.dest == Constants.DEST_HOME) {
             binding.addToBookmarkButton.setImageResource(R.drawable.bookmark_button_inactive)
         } else {
             binding.addToBookmarkButton.setImageResource(R.drawable.bookmark_button_active)
@@ -131,8 +129,7 @@ class DetailsFragment : Fragment() {
             photoIsNotFound()
         }
 
-        binding.nameSurname.text = photographer.toString()
-
+        binding.nameSurname.text = photographer
     }
 
     private fun observePhotoDetailsLiveData() {
@@ -141,8 +138,7 @@ class DetailsFragment : Fragment() {
                 viewLifecycleOwner
             ) { value ->
                 onResponseCase()
-                val photo = value
-                photoToSave = photo
+                photoToSave = ModelConverter.networkPhotoToDomainModel(value)
             }
     }
 
@@ -156,7 +152,7 @@ class DetailsFragment : Fragment() {
         with(binding) {
             progressBar.visibility = View.VISIBLE
             cardView.visibility = View.INVISIBLE
-            constraintLayout2.visibility = View.INVISIBLE
+            imageActionsLayout.visibility = View.INVISIBLE
         }
     }
 
@@ -164,8 +160,9 @@ class DetailsFragment : Fragment() {
         with(binding) {
             progressBar.visibility = View.INVISIBLE
             cardView.visibility = View.VISIBLE
-            constraintLayout2.visibility = View.VISIBLE
+            imageActionsLayout.visibility = View.VISIBLE
             imageNotFound.visibility = View.INVISIBLE
         }
     }
+
 }

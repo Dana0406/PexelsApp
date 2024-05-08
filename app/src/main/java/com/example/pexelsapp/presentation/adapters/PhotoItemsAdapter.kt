@@ -1,24 +1,43 @@
 package com.example.pexelsapp.presentation.adapters
 
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.pexelsapp.R
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.databinding.ImageItemBinding
 import com.example.pexelsapp.domain.models.Photo
+import com.example.pexelsapp.presentation.adapters.viewHolders.PhotoItemViewHolder
+import java.lang.Integer.min
 import javax.inject.Inject
 
+class PhotoItemsAdapter() :
+    RecyclerView.Adapter<PhotoItemViewHolder>() {
 
-class PhotoItemsAdapter @Inject constructor() : RecyclerView.Adapter<PhotoItemsAdapter.PhotoItemViewHolder>() {
-    lateinit var onItemClick:((Photo) -> Unit)
-    private var photoItemList = ArrayList<Photo>()
+    lateinit var onItemClick: ((NetworkPhoto) -> Unit)
+    private var photoItemList = ArrayList<NetworkPhoto>()
 
-    fun setPhotos(photosList: ArrayList<Photo>) {
+    fun setPhotos(photosList: ArrayList<NetworkPhoto>) {
+        val previousSize = itemCount
+        val newSize = photosList.size
+
+        if (newSize < previousSize) {
+            notifyItemRangeRemoved(newSize, previousSize - newSize)
+        }
+
+        for (i in 0 until min(previousSize, newSize)) {
+            if (photosList[i] != this.photoItemList[i]) {
+                notifyItemChanged(i)
+            }
+        }
+
+        if (newSize > previousSize) {
+            notifyItemRangeInserted(previousSize, newSize - previousSize)
+        }
+
         this.photoItemList = photosList
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoItemViewHolder {
@@ -31,9 +50,7 @@ class PhotoItemsAdapter @Inject constructor() : RecyclerView.Adapter<PhotoItemsA
         )
     }
 
-    override fun getItemCount(): Int {
-        return photoItemList.size
-    }
+    override fun getItemCount(): Int = photoItemList.size
 
     override fun onBindViewHolder(holder: PhotoItemViewHolder, position: Int) {
         Glide.with(holder.itemView.context)
@@ -51,8 +68,4 @@ class PhotoItemsAdapter @Inject constructor() : RecyclerView.Adapter<PhotoItemsA
             onItemClick.invoke(photoItemList[position])
         }
     }
-
-    class PhotoItemViewHolder(val binding: ImageItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
 }

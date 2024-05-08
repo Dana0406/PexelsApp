@@ -1,12 +1,10 @@
 package com.example.pexelsapp.domain.usecases
 
-import android.graphics.Bitmap
-import com.example.pexelsapp.data.repositories.ImageRepository
+import android.content.Context
+import com.example.pexelsapp.domain.repository.AppRepository
 import javax.inject.Inject
 
-class DownloadImageUseCase @Inject constructor(private val imageRepository: ImageRepository) {
+class DownloadImageUseCase @Inject constructor(private val appRepository: AppRepository) {
 
-    suspend operator fun invoke(imageUrl: String) {
-        return imageRepository.downloadImage(imageUrl)
-    }
+    suspend operator fun invoke(imageUrl: String, context: Context) = appRepository.downloadImage(imageUrl, context)
 }

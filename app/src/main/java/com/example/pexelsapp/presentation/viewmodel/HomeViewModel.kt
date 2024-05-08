@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pexelsapp.data.db.PhotoDatabase
+import com.example.pexelsapp.data.models.DBPhoto
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.retrofir.PhotoApi
 import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.models.FeaturedResponse
@@ -16,8 +17,6 @@ import com.example.pexelsapp.domain.usecases.GetCuratedPhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetFeaturedCollectionUseCase
 import com.example.pexelsapp.domain.usecases.GetPhotosBySearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,27 +30,25 @@ class HomeViewModel @Inject constructor(
     private val getPhotosBySearchUseCase: GetPhotosBySearchUseCase,
     private val getAllPhotosUseCase: GetAllPhotosUseCase
 ) : ViewModel() {
-    private var curatedPhotosLiveData = MutableLiveData<List<Photo>>()
+
+    private var curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
     private var featuredLiveData = MutableLiveData<List<Featured>>()
     private var bookmarkLiveData = getAllPhotosUseCase.execute()
-    private var searchPhotosLiveData = MutableLiveData<List<Photo>>()
-
+    private var searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
     private val _errorLiveData = MutableLiveData<String>()
     val errorLiveData: LiveData<String> = _errorLiveData
 
-    @Inject
-    lateinit var photoApi: PhotoApi
-
     fun getCuratedPhotos() {
         viewModelScope.launch {
-            val call: Call<PhotoResponse> = getCuratedPhotosUseCase.execute(1,30)
+            val call: Call<PhotoResponse> = getCuratedPhotosUseCase.execute(1, 30)
             call.enqueue(object : Callback<PhotoResponse> {
                 override fun onResponse(
                     call: Call<PhotoResponse>,
                     response: Response<PhotoResponse>
                 ) {
-                    if (response.body() != null) {
-                        curatedPhotosLiveData.value = response.body()!!.photos
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        curatedPhotosLiveData.value = responseBody.photos
                     } else {
                         return
                     }
@@ -73,8 +70,9 @@ class HomeViewModel @Inject constructor(
                     call: Call<FeaturedResponse>,
                     response: Response<FeaturedResponse>
                 ) {
-                    if (response.body() != null) {
-                        featuredLiveData.value = response.body()!!.collections
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        featuredLiveData.value = responseBody.collections
                     } else {
                         return
                     }
@@ -105,26 +103,16 @@ class HomeViewModel @Inject constructor(
                     override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
                         Log.d("HomeFragment", t.message.toString())
                     }
-
                 }
             )
         }
     }
 
-    fun observeSearchPhotosLiveData(): LiveData<List<Photo>>{
-        return searchPhotosLiveData
-    }
+    fun observeSearchPhotosLiveData(): LiveData<List<NetworkPhoto>> = searchPhotosLiveData
 
-    fun observeCuratedPhotosLiveData(): LiveData<List<Photo>> {
-        return curatedPhotosLiveData
-    }
+    fun observeCuratedPhotosLiveData(): LiveData<List<NetworkPhoto>> = curatedPhotosLiveData
 
-    fun observeFeaturedLiveData(): LiveData<List<Featured>> {
-        return featuredLiveData
-    }
+    fun observeFeaturedLiveData(): LiveData<List<Featured>> = featuredLiveData
 
-    fun observeBookmarkLiveData(): LiveData<List<Photo>> {
-        return bookmarkLiveData
-    }
-
+    fun observeBookmarkLiveData(): LiveData<List<DBPhoto>> = bookmarkLiveData
 }

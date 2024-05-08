@@ -6,17 +6,19 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.pexelsapp.data.models.DBPhoto
+import com.example.pexelsapp.data.utils.Constants
 import com.example.pexelsapp.domain.models.Photo
-import javax.inject.Inject
 
 @Dao
-interface PhotoDao{
+interface PhotoDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertPhoto(photo: Photo)
+    suspend fun upsertPhoto(photo: DBPhoto)
 
     @Delete
-    suspend fun deletePhoto(photo: Photo)
+    suspend fun deletePhoto(photo: DBPhoto)
 
-    @Query("SELECT * FROM photo_information")
-    fun getAllPhotos(): LiveData<List<Photo>>
+    @Query(Constants.SELECT_ALL)
+    fun getAllPhotos(): LiveData<List<DBPhoto>>
 }

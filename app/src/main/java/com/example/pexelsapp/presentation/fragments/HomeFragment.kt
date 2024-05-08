@@ -9,31 +9,32 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pexelsapp.R
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.databinding.FragmentHomeBinding
 import com.example.pexelsapp.domain.models.Featured
+import com.example.pexelsapp.presentation.converters.ModelConverter
 import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.presentation.adapters.FeaturedItemAdapter
 import com.example.pexelsapp.presentation.adapters.PhotoItemsAdapter
+import com.example.pexelsapp.presentation.utils.Constants
 import com.example.pexelsapp.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
+
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var featuredAdapter: FeaturedItemAdapter
+    private lateinit var curatedPhotosAdapter: PhotoItemsAdapter
     private val viewModel: HomeViewModel by viewModels()
-    private lateinit var detailPhoto: Photo
-    @Inject
-    lateinit var featuredAdapter: FeaturedItemAdapter
-    @Inject
-    lateinit var curatedPhotosAdapter: PhotoItemsAdapter
+    private val featuredList = mutableListOf<Featured>()
+    private var detailPhoto: Photo? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private fun updateFeaturedItem(position: Int, featured: Featured) {
+        featuredList[position] = featured
+        featuredAdapter.notifyItemChanged(position)
     }
 
     override fun onCreateView(
@@ -48,6 +49,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        featuredAdapter = FeaturedItemAdapter()
+        curatedPhotosAdapter = PhotoItemsAdapter()
 
         prepareFragment()
         tryAgainClicked()
@@ -84,11 +87,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun setFragmentDetails() {
-        val rootView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
-        val elementToChangeVisibility = rootView.findViewById<View>(R.id.bottomNavigationView)
-        elementToChangeVisibility.visibility = View.VISIBLE
+        val visibilityChangeListener = requireActivity() as? VisibilityChangeListener
+        visibilityChangeListener?.changeVisibility(View.VISIBLE)
     }
-    
+
     private fun searchPhotos() {
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -125,16 +127,16 @@ class HomeFragment : Fragment() {
 
     private fun curatedPhotoClicked() {
         curatedPhotosAdapter.onItemClick = { photo ->
-            detailPhoto = photo
+            detailPhoto = ModelConverter.networkPhotoToDomainModel(photo)
             val navController = requireActivity().findNavController(R.id.fragmentContainerView)
             val action = photo.src?.let {
-                photo.liked?.let { it1 ->
+                photo.liked?.let { flag ->
                     HomeFragmentDirections.actionHomeFragment2ToDetailsFragment22(
                         photo.photographer.toString(),
                         it.medium,
-                        it1,
+                        flag,
                         photo.id,
-                        "home"
+                        Constants.DEST_HOME
                     )
                 }
             }
@@ -145,19 +147,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun featuredClicked() {
-        featuredAdapter.onItemClick = {featured->
-            if(featured.selected == true){
-                featured.selected  = false
+        featuredAdapter.onItemClick = { featured ->
+            if (featured.selected == true) {
+                featured.selected = false
                 viewModel.getCuratedPhotos()
                 observeCuratedPhotosLiveData()
-                binding.searchView.setQuery("", false)
-            }else{
+                binding.searchView.setQuery(Constants.SEARCH_VIEW_BASE_QUERY, false)
+            } else {
                 featured.selected = true
                 viewModel.searchPhotos(featured.title)
                 observeCuratedPhotosLiveData()
                 binding.searchView.setQuery(featured.title, true)
             }
-            featuredAdapter.notifyDataSetChanged()
+            val position = featuredList.indexOf(featured)
+            if (position != -1) {
+                updateFeaturedItem(position, featured)
+            }
         }
     }
 
@@ -178,7 +183,7 @@ class HomeFragment : Fragment() {
                 handleDataNotReceived()
             } else {
                 onResponseCase()
-                curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<Photo>)
+                curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
             }
         }
     }
@@ -189,29 +194,29 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun observeSearchPhotosLiveData() {
+        viewModel.observeSearchPhotosLiveData().observe(
+            viewLifecycleOwner
+        ) { photoList ->
+            onResponseCase()
+            if (photoList.isEmpty()) {
+                binding.noResultsFound.visibility = View.VISIBLE
+            }
+            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+        }
+    }
+
     private fun handleNetworkStub() {
         binding.layoutNetworkStub.visibility = View.VISIBLE
         loadingCase()
     }
 
-    private fun handleDataNotReceived(){
+    private fun handleDataNotReceived() {
         binding.noResultsFound.visibility = View.VISIBLE
     }
 
-    private fun observeSearchPhotosLiveData() {
-        viewModel.observeSearchPhotosLiveData().observe(
-            viewLifecycleOwner
-        ) {photoList->
-            onResponseCase()
-            if(photoList.isEmpty()){
-                binding.noResultsFound.visibility = View.VISIBLE
-            }
-            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<Photo>)
-        }
-    }
-
     private fun loadingCase() {
-        with(binding){
+        with(binding) {
             progressBar.visibility = View.VISIBLE
             featuredRecyclerView.visibility = View.INVISIBLE
             imagesRecyclerView.visibility = View.INVISIBLE
@@ -219,7 +224,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun onResponseCase() {
-        with(binding){
+        with(binding) {
             progressBar.visibility = View.INVISIBLE
             noResultsFound.visibility = View.INVISIBLE
             featuredRecyclerView.visibility = View.VISIBLE
@@ -227,5 +232,4 @@ class HomeFragment : Fragment() {
             layoutNetworkStub.visibility = View.INVISIBLE
         }
     }
-
 }

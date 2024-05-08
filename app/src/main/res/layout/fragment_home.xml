@@ -111,7 +111,7 @@
         app:layout_constraintTop_toBottomOf="@+id/searchView">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/haventSavedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_results_found"
@@ -135,8 +135,7 @@
             android:fontFamily="@font/mulish_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/haventSavedTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

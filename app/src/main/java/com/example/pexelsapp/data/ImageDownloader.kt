@@ -11,6 +11,8 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.widget.Toast
+import com.example.pexelsapp.data.utils.Constants
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,7 +26,8 @@ import java.net.URL
 import javax.inject.Inject
 
 class ImageDownloader @Inject constructor(){
-    suspend fun downloadImage(imageUrl: String, context: Context, callback: (Bitmap?, String?) -> Unit) {
+
+    suspend fun downloadImage(imageUrl: String, context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 val url = URL(imageUrl)
@@ -37,14 +40,11 @@ class ImageDownloader @Inject constructor(){
                 val savedImageUri = saveImageToGallery(bitmap, context)
 
                 if (savedImageUri != null) {
-                    callback(bitmap, savedImageUri.toString())
                     showSuccessToast(context)
                 } else {
-                    callback(null, "Failed to save image")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
-                callback(null, "Failed to download image")
             }
         }
     }
@@ -56,13 +56,13 @@ class ImageDownloader @Inject constructor(){
             val resolver = context.contentResolver
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.MIME_TYPE, Constants.IMAGE_FORMAT)
                 put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             }
             val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             savedImageUri = imageUri
-            resolver.openOutputStream(imageUri!!).use { outputStream ->
-                if (outputStream != null) {
+            imageUri?.let { uri ->
+                resolver.openOutputStream(uri)?.use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                 }
             }
@@ -79,8 +79,10 @@ class ImageDownloader @Inject constructor(){
     }
 
     private fun showSuccessToast(context: Context) {
-        val message = "Image downloaded successfully"
-        GlobalScope.launch(Dispatchers.Main) {
+        val message = Constants.DOWNLOAD_MESSAGE
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+        coroutineScope.launch {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }

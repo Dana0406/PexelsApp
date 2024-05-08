@@ -1,8 +1,6 @@
 package com.example.pexelsapp.domain.di
 
-import com.example.pexelsapp.data.repositories.ImageRepository
-import com.example.pexelsapp.data.repositories.LocalPhotoRepository
-import com.example.pexelsapp.data.repositories.RemotePhotoRepository
+import com.example.pexelsapp.domain.repository.AppRepository
 import com.example.pexelsapp.domain.usecases.DeletePhotoUseCase
 import com.example.pexelsapp.domain.usecases.DownloadImageUseCase
 import com.example.pexelsapp.domain.usecases.GetAllPhotosUseCase
@@ -16,54 +14,45 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 object UseCaseModule {
 
     @Provides
-    fun provideGetPhotoByIdUseCase(remotePhotoRepository: RemotePhotoRepository): GetPhotoByIdUseCase {
-        return GetPhotoByIdUseCase(remotePhotoRepository)
+    fun provideGetPhotoByIdUseCase(appRepository: AppRepository): GetPhotoByIdUseCase =
+        GetPhotoByIdUseCase(appRepository)
+
+    @Provides
+    fun provideSavePhotoUseCase(appRepository: AppRepository): SavePhotoUseCase =
+        SavePhotoUseCase(appRepository)
+
+    @Provides
+    fun provideDeletePhotoUseCase(appRepository: AppRepository): DeletePhotoUseCase =
+        DeletePhotoUseCase(appRepository)
+
+    @Provides
+    fun provideGetAllPhotosUseCase(appRepository: AppRepository): GetAllPhotosUseCase {
+        return GetAllPhotosUseCase(appRepository)
     }
 
     @Provides
-    fun provideSavePhotoUseCase(localPhotoRepository: LocalPhotoRepository): SavePhotoUseCase {
-        return SavePhotoUseCase(localPhotoRepository)
-    }
+    fun provideGetCuratedPhotosUseCase(appRepository: AppRepository): GetCuratedPhotosUseCase =
+        GetCuratedPhotosUseCase(appRepository)
 
     @Provides
-    fun provideDeletePhotoUseCase(localPhotoRepository: LocalPhotoRepository): DeletePhotoUseCase {
-        return DeletePhotoUseCase(localPhotoRepository)
-    }
+    fun provideGetFeaturedCollectionUseCase(appRepository: AppRepository): GetFeaturedCollectionUseCase =
+        GetFeaturedCollectionUseCase(appRepository)
 
     @Provides
-    fun provideGetAllPhotosUseCase(localPhotoRepository: LocalPhotoRepository): GetAllPhotosUseCase {
-        return GetAllPhotosUseCase(localPhotoRepository)
-    }
+    fun provideSearchPhotosUseCase(appRepository: AppRepository): SearchPhotosUseCase =
+        SearchPhotosUseCase(appRepository)
 
     @Provides
-    fun provideGetCuratedPhotosUseCase(remotePhotoRepository: RemotePhotoRepository): GetCuratedPhotosUseCase {
-        return GetCuratedPhotosUseCase(remotePhotoRepository)
-    }
+    fun provideGetPhotosBySearchUseCase(appRepository: AppRepository): GetPhotosBySearchUseCase =
+        GetPhotosBySearchUseCase(appRepository)
 
     @Provides
-    fun provideGetFeaturedCollectionUseCase(remotePhotoRepository: RemotePhotoRepository): GetFeaturedCollectionUseCase {
-        return GetFeaturedCollectionUseCase(remotePhotoRepository)
-    }
-
-    @Provides
-    fun provideSearchPhotosUseCase(remotePhotoRepository: RemotePhotoRepository): SearchPhotosUseCase {
-        return SearchPhotosUseCase(remotePhotoRepository)
-    }
-
-    @Provides
-    fun provideGetPhotosBySearchUseCase(remotePhotoRepository: RemotePhotoRepository): GetPhotosBySearchUseCase {
-        return GetPhotosBySearchUseCase(remotePhotoRepository)
-    }
-
-    @Provides
-    fun provideDownloadImageUseCase(imageRepository: ImageRepository): DownloadImageUseCase {
-        return DownloadImageUseCase(imageRepository)
-    }
+    fun provideDownloadImageUseCase(appRepository: AppRepository): DownloadImageUseCase =
+        DownloadImageUseCase(appRepository)
 }

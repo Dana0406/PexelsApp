@@ -5,17 +5,32 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pexelsapp.databinding.FeaturedItemBinding
 import com.example.pexelsapp.domain.models.Featured
+import com.example.pexelsapp.presentation.adapters.viewHolders.FeaturedItemViewHolder
+import java.lang.Integer.min
 import javax.inject.Inject
 
-class FeaturedItemAdapter @Inject constructor() : RecyclerView.Adapter<FeaturedItemAdapter.FeaturedItemViewHolder>() {
-    lateinit var onItemClick:((Featured) -> Unit)
+class FeaturedItemAdapter() :
+    RecyclerView.Adapter<FeaturedItemViewHolder>() {
+
+    lateinit var onItemClick: ((Featured) -> Unit)
     private var featuredItemsList = ArrayList<Featured>()
     private var selectedPosition = RecyclerView.NO_POSITION
 
     fun setFeatured(featuredItemsList: ArrayList<Featured>) {
+        val previousSize = itemCount
+        val newSize = featuredItemsList.size
+
+        for (i in 0 until min(previousSize, newSize)) {
+            if (featuredItemsList[i] != this.featuredItemsList[i]) {
+                notifyItemChanged(i)
+            }
+        }
+
+        if (newSize > previousSize) {
+            notifyItemRangeInserted(previousSize, newSize - previousSize)
+        }
+
         this.featuredItemsList = featuredItemsList
-        selectedPosition = RecyclerView.NO_POSITION
-        notifyDataSetChanged()
     }
 
     fun clearSelection() {
@@ -34,9 +49,7 @@ class FeaturedItemAdapter @Inject constructor() : RecyclerView.Adapter<FeaturedI
         )
     }
 
-    override fun getItemCount(): Int {
-        return featuredItemsList.size
-    }
+    override fun getItemCount(): Int = featuredItemsList.size
 
     override fun onBindViewHolder(holder: FeaturedItemViewHolder, position: Int) {
         val featuredItem = featuredItemsList[position]
@@ -46,17 +59,14 @@ class FeaturedItemAdapter @Inject constructor() : RecyclerView.Adapter<FeaturedI
         holder.itemView.setOnClickListener {
             val clickedPosition = holder.adapterPosition
             if (clickedPosition != RecyclerView.NO_POSITION) {
-                if (clickedPosition == selectedPosition) {
-                    selectedPosition = RecyclerView.NO_POSITION
+                selectedPosition = if (clickedPosition == selectedPosition) {
+                    RecyclerView.NO_POSITION
                 } else {
-                    selectedPosition = clickedPosition
+                    clickedPosition
                 }
                 notifyDataSetChanged()
                 onItemClick.invoke(featuredItem)
             }
         }
     }
-
-    class FeaturedItemViewHolder(val binding: FeaturedItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
 }

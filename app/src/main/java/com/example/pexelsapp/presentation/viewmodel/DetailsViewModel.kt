@@ -5,18 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pexelsapp.data.db.PhotoDatabase
-import com.example.pexelsapp.data.repositories.LocalPhotoRepository
-import com.example.pexelsapp.data.repositories.RemotePhotoRepository
+import com.example.pexelsapp.data.models.DBPhoto
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.retrofir.PhotoApi
 import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.domain.usecases.DeletePhotoUseCase
 import com.example.pexelsapp.domain.usecases.GetPhotoByIdUseCase
 import com.example.pexelsapp.domain.usecases.SavePhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,17 +24,15 @@ class DetailsViewModel @Inject constructor(
     private val getPhotoByIdUseCase: GetPhotoByIdUseCase,
     private val savePhotoUseCase: SavePhotoUseCase,
     private val deletePhotoUseCase: DeletePhotoUseCase
-): ViewModel() {
-    private var photoDetailLiveData = MutableLiveData<Photo>()
+) : ViewModel() {
 
-    @Inject
-    lateinit var photoApi: PhotoApi
+    private var photoDetailLiveData = MutableLiveData<NetworkPhoto>()
 
-    fun getPhotoDetail(id: Int){
+    fun getPhotoDetail(id: Int) {
         viewModelScope.launch {
-            val call: Call<Photo> = getPhotoByIdUseCase.execute(id)
-            call.enqueue(object : Callback<Photo> {
-                override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
+            val call: Call<NetworkPhoto> = getPhotoByIdUseCase.execute(id)
+            call.enqueue(object : Callback<NetworkPhoto> {
+                override fun onResponse(call: Call<NetworkPhoto>, response: Response<NetworkPhoto>) {
                     if (response.isSuccessful) {
                         photoDetailLiveData.value = response.body()
                     } else {
@@ -45,14 +40,14 @@ class DetailsViewModel @Inject constructor(
                     }
                 }
 
-                override fun onFailure(call: Call<Photo>, t: Throwable) {
+                override fun onFailure(call: Call<NetworkPhoto>, t: Throwable) {
                     Log.d("DetailFragment", t.message.toString())
                 }
             })
         }
     }
 
-    fun insertPhoto(photo: Photo){
+    fun insertPhoto(photo: DBPhoto) {
         viewModelScope.launch {
             try {
                 savePhotoUseCase.execute(photo)
@@ -62,7 +57,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun deletePhoto(photo: Photo){
+    fun deletePhoto(photo: DBPhoto) {
         viewModelScope.launch {
             try {
                 deletePhotoUseCase.execute(photo)
@@ -72,8 +67,5 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun observePhotoDetailLiveData(): LiveData<Photo>{
-        return photoDetailLiveData
-    }
-
+    fun observePhotoDetailLiveData(): LiveData<NetworkPhoto> = photoDetailLiveData
 }
