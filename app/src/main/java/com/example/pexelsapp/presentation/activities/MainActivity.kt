@@ -27,8 +27,7 @@ class MainActivity : AppCompatActivity(), VisibilityChangeListener {
 
         val bottomNavigationView = binding.bottomNavigationView
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentByTag("navHostFragment") as NavHostFragment
 
         val navController = navHostFragment.navController
 
