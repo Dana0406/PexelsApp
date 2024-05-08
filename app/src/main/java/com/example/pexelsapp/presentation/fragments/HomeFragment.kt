@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -61,23 +62,52 @@ class HomeFragment : Fragment() {
     private fun exploreClicked() {
         binding.explore.setOnClickListener {
             viewModel.getCuratedPhotos()
-            observeCuratedPhotosLiveData()
+            observeLiveData(
+                viewModel.curatedPhotosLiveData,
+                { photoList ->
+                    curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                },
+                Constants.CURATED_PHOTOS
+            )
         }
     }
 
     private fun prepareFragment() {
         prepareFeaturedRecyclerView()
         viewModel.getFeatured()
-        observeFeaturedLiveData()
+        observeLiveData(
+            viewModel.featuredLiveData,
+            { featuredList ->
+                featuredAdapter.setFeatured(featuredItemsList = featuredList as ArrayList<Featured>)
+            },
+            Constants.FEATURED_PHOTOS
+        )
 
         prepareCuratedPhotosRecyclerView()
         viewModel.getCuratedPhotos()
-        observeCuratedPhotosLiveData()
+        observeLiveData(
+            viewModel.curatedPhotosLiveData,
+            { photoList ->
+                curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+            },
+            Constants.CURATED_PHOTOS
+        )
+
         curatedPhotoClicked()
-        observeErrorLiveData()
+        observeLiveData(
+            viewModel.errorLiveData,
+            { handleNetworkStub() },
+            Constants.ERROR
+        )
 
         searchPhotos()
-        observeSearchPhotosLiveData()
+        observeLiveData(
+            viewModel.searchPhotosLiveData,
+            { photoList ->
+                curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+            },
+            Constants.SEARCH_PHOTOS
+        )
     }
 
     private fun tryAgainClicked() {
@@ -96,7 +126,13 @@ class HomeFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     viewModel.searchPhotos(query)
-                    observeSearchPhotosLiveData()
+                    observeLiveData(
+                        viewModel.searchPhotosLiveData,
+                        { photoList ->
+                            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                        },
+                        Constants.SEARCH_PHOTOS
+                    )
                 }
                 return true
             }
@@ -104,7 +140,13 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.searchPhotos(newText)
-                    observeSearchPhotosLiveData()
+                    observeLiveData(
+                        viewModel.searchPhotosLiveData,
+                        { photoList ->
+                            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                        },
+                        Constants.SEARCH_PHOTOS
+                    )
                 }
                 return true
             }
@@ -151,12 +193,28 @@ class HomeFragment : Fragment() {
             if (featured.selected == true) {
                 featured.selected = false
                 viewModel.getCuratedPhotos()
-                observeCuratedPhotosLiveData()
+
+                observeLiveData(
+                    viewModel.curatedPhotosLiveData,
+                    { photoList ->
+                        curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                    },
+                    Constants.CURATED_PHOTOS
+                )
+
                 binding.searchView.setQuery(Constants.SEARCH_VIEW_BASE_QUERY, false)
             } else {
                 featured.selected = true
                 viewModel.searchPhotos(featured.title)
-                observeCuratedPhotosLiveData()
+
+                observeLiveData(
+                    viewModel.curatedPhotosLiveData,
+                    { photoList ->
+                        curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                    },
+                    Constants.CURATED_PHOTOS
+                )
+
                 binding.searchView.setQuery(featured.title, true)
             }
             val position = featuredList.indexOf(featured)
@@ -166,43 +224,41 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun observeFeaturedLiveData() {
-        viewModel.observeFeaturedLiveData().observe(
-            viewLifecycleOwner
-        ) { featuredList ->
-            onResponseCase()
-            featuredAdapter.setFeatured(featuredItemsList = featuredList as ArrayList<Featured>)
-        }
-    }
+    private fun <T> observeLiveData(
+        liveData: LiveData<T>,
+        onDataReceived: (T) -> Unit,
+        dataType: String
+    ) {
+        liveData.observe(viewLifecycleOwner) { data ->
+            when (dataType) {
+                Constants.FEATURED_PHOTOS -> {
+                    onResponseCase()
+                    onDataReceived(data)
+                }
 
-    private fun observeCuratedPhotosLiveData() {
-        viewModel.observeCuratedPhotosLiveData().observe(
-            viewLifecycleOwner
-        ) { photoList ->
-            if (photoList.isNullOrEmpty()) {
-                handleDataNotReceived()
-            } else {
-                onResponseCase()
-                curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                Constants.CURATED_PHOTOS -> {
+                    if (data == null) {
+                        handleDataNotReceived()
+                    } else {
+                        onResponseCase()
+                        onDataReceived(data)
+                        handleDataReceived()
+                    }
+                }
+
+                Constants.ERROR -> {
+                    handleNetworkStub()
+                }
+
+                Constants.SEARCH_PHOTOS -> {
+                    onResponseCase()
+                    if (data == null) {
+                        handleDataNotReceived()
+                    }
+                    onDataReceived(data)
+                    handleDataReceived()
+                }
             }
-        }
-    }
-
-    private fun observeErrorLiveData() {
-        viewModel.errorLiveData.observe(viewLifecycleOwner) {
-            handleNetworkStub()
-        }
-    }
-
-    private fun observeSearchPhotosLiveData() {
-        viewModel.observeSearchPhotosLiveData().observe(
-            viewLifecycleOwner
-        ) { photoList ->
-            onResponseCase()
-            if (photoList.isEmpty()) {
-                binding.noResultsFound.visibility = View.VISIBLE
-            }
-            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
         }
     }
 
@@ -213,6 +269,10 @@ class HomeFragment : Fragment() {
 
     private fun handleDataNotReceived() {
         binding.noResultsFound.visibility = View.VISIBLE
+    }
+
+    private fun handleDataReceived() {
+        binding.noResultsFound.visibility = View.GONE
     }
 
     private fun loadingCase() {

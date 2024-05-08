@@ -133,7 +133,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun observePhotoDetailsLiveData() {
-        detailsMvvm.observePhotoDetailLiveData()
+        detailsMvvm.photoDetailLiveData
             .observe(
                 viewLifecycleOwner
             ) { value ->

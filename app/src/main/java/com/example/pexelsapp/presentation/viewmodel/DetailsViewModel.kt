@@ -26,7 +26,7 @@ class DetailsViewModel @Inject constructor(
     private val deletePhotoUseCase: DeletePhotoUseCase
 ) : ViewModel() {
 
-    private var photoDetailLiveData = MutableLiveData<NetworkPhoto>()
+    var photoDetailLiveData = MutableLiveData<NetworkPhoto>()
 
     fun getPhotoDetail(id: Int) {
         viewModelScope.launch {
@@ -66,6 +66,4 @@ class DetailsViewModel @Inject constructor(
             }
         }
     }
-
-    fun observePhotoDetailLiveData(): LiveData<NetworkPhoto> = photoDetailLiveData
 }

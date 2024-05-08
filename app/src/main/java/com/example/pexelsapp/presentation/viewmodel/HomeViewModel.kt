@@ -31,12 +31,12 @@ class HomeViewModel @Inject constructor(
     private val getAllPhotosUseCase: GetAllPhotosUseCase
 ) : ViewModel() {
 
-    private var curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
-    private var featuredLiveData = MutableLiveData<List<Featured>>()
-    private var bookmarkLiveData = getAllPhotosUseCase.execute()
-    private var searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
     private val _errorLiveData = MutableLiveData<String>()
     val errorLiveData: LiveData<String> = _errorLiveData
+    var curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
+    var featuredLiveData = MutableLiveData<List<Featured>>()
+    var bookmarkLiveData = getAllPhotosUseCase.execute()
+    var searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
 
     fun getCuratedPhotos() {
         viewModelScope.launch {
@@ -107,12 +107,4 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-
-    fun observeSearchPhotosLiveData(): LiveData<List<NetworkPhoto>> = searchPhotosLiveData
-
-    fun observeCuratedPhotosLiveData(): LiveData<List<NetworkPhoto>> = curatedPhotosLiveData
-
-    fun observeFeaturedLiveData(): LiveData<List<Featured>> = featuredLiveData
-
-    fun observeBookmarkLiveData(): LiveData<List<DBPhoto>> = bookmarkLiveData
 }
