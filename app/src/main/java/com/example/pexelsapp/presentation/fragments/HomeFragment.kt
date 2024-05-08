@@ -124,7 +124,7 @@ class HomeFragment : Fragment() {
     private fun searchPhotos() {
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
+                if (!query.isNullOrEmpty()) {
                     viewModel.searchPhotos(query)
                     observeLiveData(
                         viewModel.searchPhotosLiveData,
@@ -133,12 +133,21 @@ class HomeFragment : Fragment() {
                         },
                         Constants.SEARCH_PHOTOS
                     )
+                } else {
+                    viewModel.getCuratedPhotos()
+                    observeLiveData(
+                        viewModel.curatedPhotosLiveData,
+                        { photoList ->
+                            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                        },
+                        Constants.CURATED_PHOTOS
+                    )
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
+                if (!newText.isNullOrEmpty()) {
                     viewModel.searchPhotos(newText)
                     observeLiveData(
                         viewModel.searchPhotosLiveData,
@@ -146,6 +155,15 @@ class HomeFragment : Fragment() {
                             curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
                         },
                         Constants.SEARCH_PHOTOS
+                    )
+                }else {
+                    viewModel.getCuratedPhotos()
+                    observeLiveData(
+                        viewModel.curatedPhotosLiveData,
+                        { photoList ->
+                            curatedPhotosAdapter.setPhotos(photosList = photoList as ArrayList<NetworkPhoto>)
+                        },
+                        Constants.CURATED_PHOTOS
                     )
                 }
                 return true
