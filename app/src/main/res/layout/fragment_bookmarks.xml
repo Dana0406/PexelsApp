@@ -36,41 +36,32 @@
         app:spanCount="2"
         tools:listitem="@layout/image_bookmark_item" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/anythingHaventSaved"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/noResultsFoundTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/you_haven_t_saved_anything_yet"
+        android:textSize="14sp"
+        android:fontFamily="@font/mulish_regular"
+        android:textColor="@color/text_grey"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/exploreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/explore"
+        android:layout_marginTop="@dimen/explore_button_top_margin"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:fontFamily="@font/mulish_regular"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/bookmarkTextView">
-
-        <TextView
-            android:id="@+id/haventSavedTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/you_haven_t_saved_anything_yet"
-            android:textSize="14sp"
-            android:fontFamily="@font/mulish_regular"
-            android:textColor="@color/text_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/exploreButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/explore"
-            android:layout_marginTop="@dimen/explore_button_top_margin"
-            android:textColor="@color/red"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:fontFamily="@font/mulish_regular"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/haventSavedTextView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noResultsFoundTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

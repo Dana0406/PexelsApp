@@ -4,71 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:layout_marginLeft="@dimen/fragment_end_start_margin"
     android:layout_marginRight="@dimen/fragment_end_start_margin"
+    android:background="@color/white"
     tools:context=".presentation.fragments.DetailsFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/detailsTopBarLayout"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/details_top_bar_layout_top_margin"
+        android:padding="0dp"
+        android:src="@drawable/back_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nameSurname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/mulish_regular"
+        android:text="@string/name_surname"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="0dp"
-            android:src="@drawable/back_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/nameSurname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/mulish_regular"
-            android:text="@string/name_surname"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toTopOf="@+id/backButton" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="4dp"
-        android:background="@color/gray"
-        android:progress="50"
-        android:indeterminate="true"
         android:layout_marginTop="@dimen/progress_bar_top_margin"
-        android:visibility="gone"
+        android:background="@color/gray"
+        android:indeterminate="true"
+        android:progress="50"
         android:theme="@style/ProgressBarTheme"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailsTopBarLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/backButton" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/card_corner_radius"
         android:layout_marginTop="@dimen/card_view_top_margin"
-        app:cardUseCompatPadding="true"
+        android:visibility="visible"
+        app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardPreventCornerOverlap="false"
-        app:layout_constraintBottom_toTopOf="@+id/imageActionsLayout"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toTopOf="@+id/downloadButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailsTopBarLayout">
+        app:layout_constraintTop_toBottomOf="@+id/backButton">
 
         <ImageView
             android:id="@+id/photoImageView"
@@ -78,75 +70,55 @@
             android:src="@drawable/img" />
     </androidx.cardview.widget.CardView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/imageActionsLayout"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/downloadButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="0dp"
         android:layout_marginTop="@dimen/fragment_end_start_margin"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/download_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
+        app:layout_constraintTop_toBottomOf="@+id/cardView"/>
 
-        <ImageButton
-            android:id="@+id/downloadButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="0dp"
-            android:src="@drawable/download_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/addToBookmarkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@drawable/rounded_image"
+        android:padding="0dp"
+        android:layout_marginTop="@dimen/fragment_end_start_margin"
+        android:src="@drawable/bookmark_button_selector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"/>
 
-        <ImageButton
-            android:id="@+id/addToBookmarkButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:background="@drawable/rounded_image"
-            android:padding="0dp"
-            android:src="@drawable/bookmark_button_selector"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/imageNotFound"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/noResultsFoundTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/mulish_regular"
+        android:text="@string/no_results_found"
+        android:textColor="@color/text_grey"
+        android:textSize="14sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/exploreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/explore_button_top_margin"
+        android:fontFamily="@font/mulish_regular"
+        android:text="@string/explore"
+        android:textColor="@color/red"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/detailsTopBarLayout">
-
-        <TextView
-            android:id="@+id/haventSavedTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_results_found"
-            android:textSize="14sp"
-            android:fontFamily="@font/mulish_regular"
-            android:textColor="@color/text_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/exploreTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/explore"
-            android:layout_marginTop="@dimen/explore_button_top_margin"
-            android:textColor="@color/red"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:fontFamily="@font/mulish_regular"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/haventSavedTextView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noResultsFoundTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

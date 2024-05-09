@@ -143,7 +143,8 @@ class DetailsFragment : Fragment() {
     }
 
     private fun photoIsNotFound() {
-        binding.imageNotFound.visibility = View.VISIBLE
+        binding.noResultsFoundTextView.visibility = View.VISIBLE
+        binding.exploreTextView.visibility = View.VISIBLE
         loadingCase()
         binding.progressBar.visibility = View.INVISIBLE
     }
@@ -152,7 +153,8 @@ class DetailsFragment : Fragment() {
         with(binding) {
             progressBar.visibility = View.VISIBLE
             cardView.visibility = View.INVISIBLE
-            imageActionsLayout.visibility = View.INVISIBLE
+            downloadButton.visibility = View.INVISIBLE
+            addToBookmarkButton.visibility = View.INVISIBLE
         }
     }
 
@@ -160,8 +162,10 @@ class DetailsFragment : Fragment() {
         with(binding) {
             progressBar.visibility = View.INVISIBLE
             cardView.visibility = View.VISIBLE
-            imageActionsLayout.visibility = View.VISIBLE
-            imageNotFound.visibility = View.INVISIBLE
+            downloadButton.visibility = View.VISIBLE
+            addToBookmarkButton.visibility = View.VISIBLE
+            binding.noResultsFoundTextView.visibility = View.INVISIBLE
+            binding.exploreTextView.visibility = View.INVISIBLE
         }
     }
 

@@ -65,77 +65,58 @@
         app:spanCount="2"
         tools:listitem="@layout/image_item" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_network_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ImageView
+        android:id="@+id/networkStubImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/no_network_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"/>
+
+    <TextView
+        android:id="@+id/tryAgainTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_end_start_margin"
+        android:fontFamily="@font/mulish_regular"
+        android:text="@string/try_again"
+        android:textColor="@color/red"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/networkStubImage"
+        app:layout_constraintStart_toStartOf="@+id/networkStubImage"
+        app:layout_constraintTop_toBottomOf="@+id/networkStubImage"/>
+
+    <TextView
+        android:id="@+id/noResultsFoundTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_results_found"
+        android:textSize="14sp"
+        android:fontFamily="@font/mulish_regular"
+        android:textColor="@color/text_grey"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/searchView">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/no_network_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tryAgainTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fragment_end_start_margin"
-            android:fontFamily="@font/mulish_regular"
-            android:text="@string/try_again"
-            android:textColor="@color/red"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/imageView"
-            app:layout_constraintStart_toStartOf="@+id/imageView"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/noResultsFound"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"/>
+
+    <TextView
+        android:id="@+id/exploreHomeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/explore"
+        android:layout_marginTop="@dimen/explore_button_top_margin"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:fontFamily="@font/mulish_regular"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/searchView">
-
-        <TextView
-            android:id="@+id/haventSavedTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_results_found"
-            android:textSize="14sp"
-            android:fontFamily="@font/mulish_regular"
-            android:textColor="@color/text_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/explore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/explore"
-            android:layout_marginTop="@dimen/explore_button_top_margin"
-            android:textColor="@color/red"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:fontFamily="@font/mulish_regular"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/haventSavedTextView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noResultsFoundTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

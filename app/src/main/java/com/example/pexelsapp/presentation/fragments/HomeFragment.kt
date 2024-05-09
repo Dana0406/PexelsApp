@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun exploreClicked() {
-        binding.explore.setOnClickListener {
+        binding.exploreHomeButton.setOnClickListener {
             viewModel.getCuratedPhotos()
             observeLiveData(
                 viewModel.curatedPhotosLiveData,
@@ -281,16 +281,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun handleNetworkStub() {
-        binding.layoutNetworkStub.visibility = View.VISIBLE
+        with(binding){
+            networkStubImage.visibility = View.VISIBLE
+            tryAgainTextView.visibility = View.VISIBLE
+        }
         loadingCase()
     }
 
     private fun handleDataNotReceived() {
-        binding.noResultsFound.visibility = View.VISIBLE
+        binding.noResultsFoundTextView.visibility = View.VISIBLE
+        binding.exploreHomeButton.visibility = View.VISIBLE
     }
 
     private fun handleDataReceived() {
-        binding.noResultsFound.visibility = View.GONE
+        binding.noResultsFoundTextView.visibility = View.INVISIBLE
+        binding.exploreHomeButton.visibility = View.INVISIBLE
     }
 
     private fun loadingCase() {
@@ -304,10 +309,12 @@ class HomeFragment : Fragment() {
     private fun onResponseCase() {
         with(binding) {
             progressBar.visibility = View.INVISIBLE
-            noResultsFound.visibility = View.INVISIBLE
+            binding.noResultsFoundTextView.visibility = View.INVISIBLE
+            binding.exploreHomeButton.visibility = View.INVISIBLE
             featuredRecyclerView.visibility = View.VISIBLE
             imagesRecyclerView.visibility = View.VISIBLE
-            layoutNetworkStub.visibility = View.INVISIBLE
+            networkStubImage.visibility = View.INVISIBLE
+            tryAgainTextView.visibility = View.INVISIBLE
         }
     }
 }

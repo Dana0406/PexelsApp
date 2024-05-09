@@ -96,9 +96,11 @@ class BookmarksFragment : Fragment() {
         viewModel.bookmarkLiveData.observe(viewLifecycleOwner, Observer { photos ->
             bookmarkPhotosAdapter.setPhotos(photosList = photos as ArrayList<DBPhoto>)
             if (photos.isEmpty()) {
-                binding.anythingHaventSaved.visibility = View.VISIBLE
+                binding.noResultsFoundTextView.visibility = View.VISIBLE
+                binding.exploreButton.visibility = View.VISIBLE
             } else {
-                binding.anythingHaventSaved.visibility = View.INVISIBLE
+                binding.noResultsFoundTextView.visibility = View.INVISIBLE
+                binding.exploreButton.visibility = View.INVISIBLE
             }
         })
     }
