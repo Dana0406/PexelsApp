@@ -1,12 +1,14 @@
 package com.example.pexelsapp.data.repositories
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.pexelsapp.data.ImageDownloader
 import com.example.pexelsapp.data.db.PhotoDao
 import com.example.pexelsapp.data.models.DBPhoto
 import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.retrofir.PhotoApi
+import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.models.FeaturedResponse
 import com.example.pexelsapp.domain.models.PhotoResponse
 import com.example.pexelsapp.domain.repository.AppRepository
@@ -18,7 +20,9 @@ import javax.inject.Singleton
 class AppRepositoryImpl @Inject constructor(
     private val imageDownloader: ImageDownloader,
     private val photoDao: PhotoDao,
-    private val photoApi: PhotoApi
+    private val photoApi: PhotoApi,
+    private val photoMap: MutableMap<Int, NetworkPhoto>,
+    private val featuredMap: MutableMap<String, Featured>,
 ): AppRepository {
 
     override suspend fun downloadImage(imageUrl: String, context: Context) {
@@ -48,4 +52,28 @@ class AppRepositoryImpl @Inject constructor(
         page: Int,
         perPage: Int
     ): Response<PhotoResponse> = photoApi.getPhotosBySearch(query, page, perPage)
+
+    override fun getCachePhoto(photoId: Int): NetworkPhoto? {
+        return photoMap[photoId]
+    }
+
+    override fun getAllCachePhotos(): List<NetworkPhoto> {
+        return photoMap.values.toList()
+    }
+
+    override fun addPhotosToCache(photos: List<NetworkPhoto>) {
+        for (photo in photos) {
+            photoMap[photo.id] = photo
+        }
+    }
+
+    override fun getAllCacheFeatured(): List<Featured> {
+        return featuredMap.values.toList()
+    }
+
+    override fun addFeaturedToCache(featured: List<Featured>) {
+        for (feature in featured) {
+            featuredMap[feature.id] = feature
+        }
+    }
 }

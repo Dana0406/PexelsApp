@@ -138,7 +138,7 @@ class DetailsFragment : Fragment() {
                 viewLifecycleOwner
             ) { value ->
                 onResponseCase()
-                photoToSave = ModelConverter.networkPhotoToDomainModel(value)
+                photoToSave = value?.let { ModelConverter.networkPhotoToDomainModel(it) }
             }
     }
 

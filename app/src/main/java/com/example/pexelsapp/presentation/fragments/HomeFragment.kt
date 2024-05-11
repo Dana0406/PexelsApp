@@ -289,13 +289,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun handleDataNotReceived() {
-        binding.noResultsFoundTextView.visibility = View.VISIBLE
-        binding.exploreHomeButton.visibility = View.VISIBLE
+        with(binding) {
+            noResultsFoundTextView.visibility = View.VISIBLE
+            exploreHomeButton.visibility = View.VISIBLE
+        }
     }
 
     private fun handleDataReceived() {
-        binding.noResultsFoundTextView.visibility = View.INVISIBLE
-        binding.exploreHomeButton.visibility = View.INVISIBLE
+        with(binding){
+            noResultsFoundTextView.visibility = View.INVISIBLE
+            exploreHomeButton.visibility = View.INVISIBLE
+        }
     }
 
     private fun loadingCase() {

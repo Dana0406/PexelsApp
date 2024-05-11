@@ -12,6 +12,10 @@ import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.models.FeaturedResponse
 import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.domain.models.PhotoResponse
+import com.example.pexelsapp.domain.usecases.AddFeaturedToCacheUseCase
+import com.example.pexelsapp.domain.usecases.AddPhotosToCacheUseCase
+import com.example.pexelsapp.domain.usecases.GetAllCacheFeaturedUseCase
+import com.example.pexelsapp.domain.usecases.GetAllCachePhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetAllPhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetCuratedPhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetFeaturedCollectionUseCase
@@ -30,7 +34,11 @@ class HomeViewModel @Inject constructor(
     private val getCuratedPhotosUseCase: GetCuratedPhotosUseCase,
     private val getFeaturedCollectionUseCase: GetFeaturedCollectionUseCase,
     private val getPhotosBySearchUseCase: GetPhotosBySearchUseCase,
-    private val getAllPhotosUseCase: GetAllPhotosUseCase
+    private val getAllPhotosUseCase: GetAllPhotosUseCase,
+    private val getAllCachePhotosUseCase: GetAllCachePhotosUseCase,
+    private val addPhotosToCacheUseCase: AddPhotosToCacheUseCase,
+    private val getAllCacheFeaturedUseCase: GetAllCacheFeaturedUseCase,
+    private val addFeaturedToCacheUseCase: AddFeaturedToCacheUseCase
 ) : ViewModel() {
 
     private val _errorLiveData = MutableLiveData<String>()
@@ -41,6 +49,13 @@ class HomeViewModel @Inject constructor(
     val searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
 
     fun getCuratedPhotos() {
+
+        val cachedPhotos = getAllCachePhotosUseCase.execute()
+        if(cachedPhotos.isNotEmpty()){
+            curatedPhotosLiveData.postValue(cachedPhotos)
+            return
+        }
+
         viewModelScope.launch {
             try {
                 val response: Response<PhotoResponse> = coroutineScope {
@@ -49,6 +64,7 @@ class HomeViewModel @Inject constructor(
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     curatedPhotosLiveData.value = responseBody.photos
+                    addPhotosToCacheUseCase.execute(responseBody.photos)
                 } else {
                     Log.d("HomeFragment", "Error")
                 }
@@ -59,6 +75,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getFeatured() {
+
+        val cachedFeatured = getAllCacheFeaturedUseCase.execute()
+        if(cachedFeatured.isNotEmpty()){
+            featuredLiveData.postValue(cachedFeatured)
+            return
+        }
+
         viewModelScope.launch {
             try {
                 val response: Response<FeaturedResponse> = coroutineScope {
@@ -67,6 +90,7 @@ class HomeViewModel @Inject constructor(
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     featuredLiveData.value = responseBody.collections
+                    addFeaturedToCacheUseCase.execute(responseBody.collections)
                 } else {
                     Log.d("HomeFragment", "Error")
                 }

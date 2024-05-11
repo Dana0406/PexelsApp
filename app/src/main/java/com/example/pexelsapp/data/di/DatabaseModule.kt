@@ -6,9 +6,11 @@ import com.example.pexelsapp.data.ImageDownloader
 import com.example.pexelsapp.data.db.PhotoDao
 import com.example.pexelsapp.data.db.PhotoDatabase
 import com.example.pexelsapp.data.db.PhotoTypeConverter
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.repositories.AppRepositoryImpl
 import com.example.pexelsapp.data.retrofir.PhotoApi
 import com.example.pexelsapp.data.utils.Constants
+import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.repository.AppRepository
 import dagger.Module
 import dagger.Provides
@@ -17,6 +19,7 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
@@ -40,6 +43,13 @@ object DatabaseModule {
 
     @Provides
     @ActivityRetainedScoped
+    fun provideCachePhotoMap()= mutableMapOf<Int, NetworkPhoto>()
+    @Provides
+    @ActivityRetainedScoped
+    fun provideCacheFeaturedMap()= mutableMapOf<String, Featured>()
+
+    @Provides
+    @ActivityRetainedScoped
     fun providePhotoTypeConverter(): PhotoTypeConverter =
         PhotoTypeConverter()
 
@@ -48,8 +58,10 @@ object DatabaseModule {
     fun provideAppRepository(
         imageDownloader: ImageDownloader,
         photoDao: PhotoDao,
-        photoApi: PhotoApi
+        photoApi: PhotoApi,
+        photoMap: MutableMap<Int, NetworkPhoto>,
+        featuredMap: MutableMap<String, Featured>
     ): AppRepository {
-        return AppRepositoryImpl(imageDownloader, photoDao, photoApi)
+        return AppRepositoryImpl(imageDownloader, photoDao, photoApi, photoMap, featuredMap)
     }
 }
