@@ -1,8 +1,8 @@
 package com.example.pexelsapp.domain.usecases
 
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.domain.models.PhotoResponse
 import com.example.pexelsapp.domain.repository.AppRepository
-import retrofit2.Call
 import retrofit2.Response
 
 class GetPhotosBySearchUseCase(private val appRepository: AppRepository) {

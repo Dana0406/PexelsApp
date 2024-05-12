@@ -18,12 +18,8 @@ interface AppRepository {
     suspend fun getFeaturedCollection(page: Int, perPage: Int): Response<FeaturedResponse>
     suspend fun getPhotosBySearch(query: String, page: Int, perPage: Int): Response<PhotoResponse>
     fun getCachePhoto(photoId: Int): NetworkPhoto?
-
     fun getAllCachePhotos(): List<NetworkPhoto>
-
     fun addPhotosToCache(photos: List<NetworkPhoto>)
-
     fun getAllCacheFeatured(): List<Featured>
-
     fun addFeaturedToCache(featured: List<Featured>)
 }

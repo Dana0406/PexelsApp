@@ -5,13 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.liveData
 import com.example.pexelsapp.data.models.DBPhoto
 import com.example.pexelsapp.data.models.NetworkPhoto
-import com.example.pexelsapp.data.retrofir.PhotoApi
+import com.example.pexelsapp.data.paging.PhotoPagingSource
+import com.example.pexelsapp.data.paging.SearchPhotoPagingSource
 import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.models.FeaturedResponse
-import com.example.pexelsapp.domain.models.Photo
-import com.example.pexelsapp.domain.models.PhotoResponse
 import com.example.pexelsapp.domain.usecases.AddFeaturedToCacheUseCase
 import com.example.pexelsapp.domain.usecases.AddPhotosToCacheUseCase
 import com.example.pexelsapp.domain.usecases.GetAllCacheFeaturedUseCase
@@ -23,8 +27,6 @@ import com.example.pexelsapp.domain.usecases.GetPhotosBySearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
@@ -38,40 +40,18 @@ class HomeViewModel @Inject constructor(
     private val getAllCachePhotosUseCase: GetAllCachePhotosUseCase,
     private val addPhotosToCacheUseCase: AddPhotosToCacheUseCase,
     private val getAllCacheFeaturedUseCase: GetAllCacheFeaturedUseCase,
-    private val addFeaturedToCacheUseCase: AddFeaturedToCacheUseCase
+    private val addFeaturedToCacheUseCase: AddFeaturedToCacheUseCase,
 ) : ViewModel() {
 
     private val _errorLiveData = MutableLiveData<String>()
     val errorLiveData: LiveData<String> = _errorLiveData
-    val curatedPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
     val featuredLiveData = MutableLiveData<List<Featured>>()
     val bookmarkLiveData = MutableLiveData<List<DBPhoto>>()
-    val searchPhotosLiveData = MutableLiveData<List<NetworkPhoto>>()
 
-    fun getCuratedPhotos() {
-
-        val cachedPhotos = getAllCachePhotosUseCase.execute()
-        if(cachedPhotos.isNotEmpty()){
-            curatedPhotosLiveData.postValue(cachedPhotos)
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                val response: Response<PhotoResponse> = coroutineScope {
-                    getCuratedPhotosUseCase.execute(1, 30)
-                }
-                val responseBody = response.body()
-                if (response.isSuccessful && responseBody != null) {
-                    curatedPhotosLiveData.value = responseBody.photos
-                    addPhotosToCacheUseCase.execute(responseBody.photos)
-                } else {
-                    Log.d("HomeFragment", "Error")
-                }
-            } catch (e: IOException) {
-                Log.d("HomeFragment", e.message.toString())
-            }
-        }
+    fun getCuratedPhotos(): LiveData<PagingData<NetworkPhoto>> {
+        return Pager(PagingConfig(pageSize = 30)) {
+            PhotoPagingSource(getCuratedPhotosUseCase,getAllCachePhotosUseCase, addPhotosToCacheUseCase)
+        }.liveData.cachedIn(viewModelScope)
     }
 
     fun getFeatured() {
@@ -100,20 +80,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun searchPhotos(searchQuery: String) {
-        viewModelScope.launch {
-            try {
-                val response: Response<PhotoResponse> = coroutineScope {
-                    getPhotosBySearchUseCase.execute(searchQuery, 1, 30)
-                }
-                val photoList = response.body()?.photos
-                photoList?.let {
-                    searchPhotosLiveData.postValue(it)
-                }
-            } catch (e: IOException) {
-                Log.d("HomeFragment", e.message.toString())
-            }
-        }
+    fun searchPhotos(searchQuery: String): LiveData<PagingData<NetworkPhoto>> {
+        return Pager(PagingConfig(pageSize = 30)) {
+            SearchPhotoPagingSource(getPhotosBySearchUseCase, searchQuery)
+        }.liveData.cachedIn(viewModelScope)
     }
 
     fun getAllPhotos(){

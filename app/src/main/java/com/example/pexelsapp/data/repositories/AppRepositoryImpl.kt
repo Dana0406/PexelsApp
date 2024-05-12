@@ -2,14 +2,13 @@ package com.example.pexelsapp.data.repositories
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.example.pexelsapp.data.ImageDownloader
 import com.example.pexelsapp.data.db.PhotoDao
 import com.example.pexelsapp.data.models.DBPhoto
-import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.data.retrofir.PhotoApi
 import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.domain.models.FeaturedResponse
+import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.domain.models.PhotoResponse
 import com.example.pexelsapp.domain.repository.AppRepository
 import retrofit2.Response

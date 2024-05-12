@@ -12,9 +12,12 @@ data class NetworkPhoto(
     val height: Int?,
     val url: String?,
     val photographer: String?,
-    @SerializedName("photographer_url") val photographerUrl: String?,
-    @SerializedName("photographer_id") val photographerId: Int?,
-    @SerializedName("avg_color") val avgColor: String?,
+    @SerializedName("photographer_url")
+    val photographerUrl: String?,
+    @SerializedName("photographer_id")
+    val photographerId: Int?,
+    @SerializedName("avg_color")
+    val avgColor: String?,
     val src: PhotoSource?,
     var liked: Boolean? = false,
     val alt: String?
