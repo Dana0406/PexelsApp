@@ -28,7 +28,6 @@ class DetailsViewModel @Inject constructor(
     var photoDetailLiveData = MutableLiveData<NetworkPhoto?>()
 
     fun getPhotoDetail(id: Int) {
-
         val cachedPhoto = getPhotoFromCacheUseCase.execute(id)
         if(cachedPhoto != null){
             photoDetailLiveData.postValue(cachedPhoto)

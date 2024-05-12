@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pexelsapp.R
@@ -65,9 +66,7 @@ class HomeFragment : Fragment() {
 
     private fun exploreClicked() {
         binding.exploreHomeButton.setOnClickListener {
-            viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-                curatedPhotosAdapter.submitData(lifecycle, pagingData)
-            }
+            observePagingData(viewModel.getCuratedPhotos())
         }
     }
 
@@ -83,9 +82,7 @@ class HomeFragment : Fragment() {
         )
 
         prepareCuratedPhotosRecyclerView()
-        viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-            curatedPhotosAdapter.submitData(lifecycle, pagingData)
-        }
+        observePagingData(viewModel.getCuratedPhotos())
 
         curatedPhotoClicked()
         observeLiveData(
@@ -95,9 +92,7 @@ class HomeFragment : Fragment() {
         )
 
         searchPhotos()
-        viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-            curatedPhotosAdapter.submitData(lifecycle, pagingData)
-        }
+        observePagingData(viewModel.getCuratedPhotos())
     }
 
     private fun tryAgainClicked() {
@@ -115,30 +110,26 @@ class HomeFragment : Fragment() {
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
-                    viewModel.searchPhotos(query).observe(viewLifecycleOwner) { pagingData ->
-                        curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                    }
+                    searchPhotoAction(query)
                 } else {
-                    viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-                        curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                    }
+                    observePagingData(viewModel.getCuratedPhotos())
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (!newText.isNullOrEmpty()) {
-                    viewModel.searchPhotos(newText).observe(viewLifecycleOwner) { pagingData ->
-                        curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                    }
+                    searchPhotoAction(newText)
                 } else {
-                    viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-                        curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                    }
+                    observePagingData(viewModel.getCuratedPhotos())
                 }
                 return true
             }
         })
+    }
+
+    private fun searchPhotoAction(text: String){
+        observePagingData(viewModel.searchPhotos(text))
     }
 
     private fun prepareFeaturedRecyclerView() {
@@ -180,16 +171,12 @@ class HomeFragment : Fragment() {
         featuredAdapter.onItemClick = { featured ->
             if (featured.selected == true) {
                 featured.selected = false
-                viewModel.getCuratedPhotos().observe(viewLifecycleOwner) { pagingData ->
-                    curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                }
+                observePagingData(viewModel.getCuratedPhotos())
 
                 binding.searchView.setQuery(Constants.SEARCH_VIEW_BASE_QUERY, false)
             } else {
                 featured.selected = true
-                viewModel.searchPhotos(featured.title).observe(viewLifecycleOwner) { pagingData ->
-                    curatedPhotosAdapter.submitData(lifecycle, pagingData)
-                }
+                observePagingData(viewModel.searchPhotos(featured.title))
 
                 binding.searchView.setQuery(featured.title, true)
             }
@@ -197,6 +184,12 @@ class HomeFragment : Fragment() {
             if (position != -1) {
                 updateFeaturedItem(position, featured)
             }
+        }
+    }
+
+    fun observePagingData(pagingDataLiveData: LiveData<PagingData<NetworkPhoto>>) {
+        pagingDataLiveData.observe(viewLifecycleOwner) { pagingData ->
+            curatedPhotosAdapter.submitData(lifecycle, pagingData)
         }
     }
 
@@ -243,7 +236,6 @@ class HomeFragment : Fragment() {
             networkStubImage.visibility = View.VISIBLE
             tryAgainTextView.visibility = View.VISIBLE
         }
-        loadingCase()
     }
 
     private fun handleDataNotReceived() {
@@ -261,6 +253,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadingCase() {
+        handleNetworkStub()
         with(binding) {
             progressBar.visibility = View.VISIBLE
             featuredRecyclerView.visibility = View.INVISIBLE
@@ -271,8 +264,8 @@ class HomeFragment : Fragment() {
     private fun onResponseCase() {
         with(binding) {
             progressBar.visibility = View.INVISIBLE
-            binding.noResultsFoundTextView.visibility = View.INVISIBLE
-            binding.exploreHomeButton.visibility = View.INVISIBLE
+            noResultsFoundTextView.visibility = View.INVISIBLE
+            exploreHomeButton.visibility = View.INVISIBLE
             featuredRecyclerView.visibility = View.VISIBLE
             imagesRecyclerView.visibility = View.VISIBLE
             networkStubImage.visibility = View.INVISIBLE

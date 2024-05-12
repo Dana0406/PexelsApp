@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav"
-    app:startDestination="@id/homeFragment2">
+    app:startDestination="@id/splashScreenFragment">
 
     <fragment
         android:id="@+id/homeFragment2"
@@ -64,5 +64,14 @@
             app:destination="@id/homeFragment2"
             app:enterAnim="@animator/slide_in_right"
             app:exitAnim="@animator/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="com.example.pexelsapp.presentation.fragments.SplashScreenFragment"
+        android:label="fragment_splash_screen"
+        tools:layout="@layout/fragment_splash_screen" >
+        <action
+            android:id="@+id/action_splashScreenFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2" />
     </fragment>
 </navigation>

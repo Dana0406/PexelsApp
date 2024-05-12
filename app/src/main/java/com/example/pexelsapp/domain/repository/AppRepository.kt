@@ -9,6 +9,7 @@ import com.example.pexelsapp.domain.models.PhotoResponse
 import retrofit2.Response
 
 interface AppRepository {
+
     suspend fun downloadImage(imageUrl: String, context: Context)
     suspend fun savePhoto(photo: DBPhoto)
     suspend fun deletePhoto(photo: DBPhoto)

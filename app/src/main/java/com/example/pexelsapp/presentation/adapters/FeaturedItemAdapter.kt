@@ -33,12 +33,6 @@ class FeaturedItemAdapter() :
         this.featuredItemsList = featuredItemsList
     }
 
-    fun clearSelection() {
-        val previousSelectedPosition = selectedPosition
-        selectedPosition = RecyclerView.NO_POSITION
-        notifyItemChanged(previousSelectedPosition)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeaturedItemViewHolder {
         return FeaturedItemViewHolder(
             FeaturedItemBinding
@@ -53,18 +47,20 @@ class FeaturedItemAdapter() :
 
     override fun onBindViewHolder(holder: FeaturedItemViewHolder, position: Int) {
         val featuredItem = featuredItemsList[position]
-        holder.binding.featuredItem.text = featuredItem.title.toString()
+        holder.binding.featuredItem.text = featuredItem.title
         holder.itemView.isSelected = holder.adapterPosition == selectedPosition
 
         holder.itemView.setOnClickListener {
             val clickedPosition = holder.adapterPosition
             if (clickedPosition != RecyclerView.NO_POSITION) {
+                val previouslySelectedPosition = selectedPosition
                 selectedPosition = if (clickedPosition == selectedPosition) {
                     RecyclerView.NO_POSITION
                 } else {
                     clickedPosition
                 }
-                notifyDataSetChanged()
+                notifyItemChanged(previouslySelectedPosition)
+                notifyItemChanged(selectedPosition)
                 onItemClick.invoke(featuredItem)
             }
         }

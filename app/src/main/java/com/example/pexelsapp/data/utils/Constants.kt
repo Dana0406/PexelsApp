@@ -9,6 +9,5 @@ object Constants {
     const val BASE_URL = "https://api.pexels.com/v1/"
     const val DATABASE_NAME = "photo"
     const val IMAGE_FORMAT = "image/jpeg"
-
     const val DOWNLOAD_MESSAGE = "Image downloaded successfully"
 }

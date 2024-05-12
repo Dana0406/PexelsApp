@@ -9,6 +9,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.pexelsapp.R
 import com.example.pexelsapp.data.models.NetworkPhoto
 import com.example.pexelsapp.databinding.ImageItemBinding
+import com.example.pexelsapp.presentation.adapters.diffutil.NetworkPhotoDiffCallback
 import com.example.pexelsapp.presentation.adapters.viewHolders.PhotoItemViewHolder
 
 class PhotoItemsAdapter() :
@@ -47,13 +48,5 @@ class PhotoItemsAdapter() :
     }
 }
 
-class NetworkPhotoDiffCallback : DiffUtil.ItemCallback<NetworkPhoto>() {
-    override fun areItemsTheSame(oldItem: NetworkPhoto, newItem: NetworkPhoto): Boolean {
-        return oldItem.id == newItem.id
-    }
 
-    override fun areContentsTheSame(oldItem: NetworkPhoto, newItem: NetworkPhoto): Boolean {
-        return oldItem == newItem
-    }
-}
 

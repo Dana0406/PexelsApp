@@ -1,5 +1,6 @@
 package com.example.pexelsapp.data.db
 
+import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.pexelsapp.domain.models.PhotoSource
@@ -9,11 +10,8 @@ import javax.inject.Singleton
 
 @TypeConverters
 @Singleton
-class PhotoTypeConverter @Inject constructor() {
-
-    private val gson = Gson()
-    /*@Inject
-    lateinit var gson: Gson*/
+@ProvidedTypeConverter
+class PhotoTypeConverter (private val gson: Gson) {
 
     @TypeConverter
     fun fromPhotoSource(photoSource: PhotoSource): String = gson.toJson(photoSource)
