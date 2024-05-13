@@ -3,7 +3,6 @@ package com.example.pexelsapp.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.pexelsapp.data.models.NetworkPhoto
-import com.example.pexelsapp.domain.repository.AppRepository
 import com.example.pexelsapp.domain.usecases.GetPhotosBySearchUseCase
 
 class SearchPhotoPagingSource(
@@ -24,11 +23,15 @@ class SearchPhotoPagingSource(
             val response = getPhotosBySearchUseCase.execute(query, currentPage, params.loadSize)
             val data = response.body()?.photos.orEmpty()
 
-            LoadResult.Page(
-                data = data,
-                prevKey = if (currentPage == 1) null else currentPage - 1,
-                nextKey = if (data.isEmpty()) null else currentPage + 1
-            )
+            if (response.isSuccessful) {
+                LoadResult.Page(
+                    data = data,
+                    prevKey = if (currentPage == 1) null else currentPage - 1,
+                    nextKey = if (data.isEmpty()) null else currentPage + 1
+                )
+            } else {
+                LoadResult.Error(Exception("Не удалось выполнить запрос: ${response.code()} ${response.message()}"))
+            }
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

@@ -3,7 +3,6 @@ package com.example.pexelsapp.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.pexelsapp.data.models.NetworkPhoto
-import com.example.pexelsapp.domain.repository.AppRepository
 import com.example.pexelsapp.domain.usecases.AddPhotosToCacheUseCase
 import com.example.pexelsapp.domain.usecases.GetAllCachePhotosUseCase
 import com.example.pexelsapp.domain.usecases.GetCuratedPhotosUseCase
@@ -33,7 +32,7 @@ class PhotoPagingSource(
                     nextKey = null
                 )
             } else {
-                val response = getCuratedPhotosUseCase.execute(currentPage, params.loadSize)
+                val response = getCuratedPhotosUseCase.execute(currentPage, 30)
                 val data = response.body()?.photos.orEmpty()
 
                 addPhotosToCacheUseCase.execute(data)

@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +23,6 @@ import com.example.pexelsapp.presentation.adapters.PhotoItemsAdapter
 import com.example.pexelsapp.presentation.utils.Constants
 import com.example.pexelsapp.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -128,7 +124,7 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun searchPhotoAction(text: String){
+    private fun searchPhotoAction(text: String) {
         observePagingData(viewModel.searchPhotos(text))
     }
 
@@ -205,34 +201,15 @@ class HomeFragment : Fragment() {
                     onDataReceived(data)
                 }
 
-                Constants.CURATED_PHOTOS -> {
-                    if (data == null) {
-                        handleDataNotReceived()
-                    } else {
-                        onResponseCase()
-                        onDataReceived(data)
-                        handleDataReceived()
-                    }
-                }
-
                 Constants.ERROR -> {
-                    handleNetworkStub()
-                }
-
-                Constants.SEARCH_PHOTOS -> {
-                    onResponseCase()
-                    if (data == null) {
-                        handleDataNotReceived()
-                    }
-                    onDataReceived(data)
-                    handleDataReceived()
+                    handleDataNotReceived()
                 }
             }
         }
     }
 
     private fun handleNetworkStub() {
-        with(binding){
+        with(binding) {
             networkStubImage.visibility = View.VISIBLE
             tryAgainTextView.visibility = View.VISIBLE
         }
@@ -242,11 +219,12 @@ class HomeFragment : Fragment() {
         with(binding) {
             noResultsFoundTextView.visibility = View.VISIBLE
             exploreHomeButton.visibility = View.VISIBLE
+            imagesRecyclerView.visibility = View.INVISIBLE
         }
     }
 
     private fun handleDataReceived() {
-        with(binding){
+        with(binding) {
             noResultsFoundTextView.visibility = View.INVISIBLE
             exploreHomeButton.visibility = View.INVISIBLE
         }

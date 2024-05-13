@@ -55,7 +55,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getFeatured() {
-
         val cachedFeatured = getAllCacheFeaturedUseCase.execute()
         if(cachedFeatured.isNotEmpty()){
             featuredLiveData.postValue(cachedFeatured)
@@ -72,7 +71,7 @@ class HomeViewModel @Inject constructor(
                     featuredLiveData.value = responseBody.collections
                     addFeaturedToCacheUseCase.execute(responseBody.collections)
                 } else {
-                    Log.d("HomeFragment", "Error")
+                    _errorLiveData.value = "Error"
                 }
             } catch (e: IOException) {
                 Log.d("HomeFragment", e.message.toString())

@@ -1,7 +1,6 @@
 package com.example.pexelsapp.data.repositories
 
 import android.content.Context
-import android.util.Log
 import com.example.pexelsapp.data.ImageDownloader
 import com.example.pexelsapp.data.db.PhotoDao
 import com.example.pexelsapp.data.models.DBPhoto

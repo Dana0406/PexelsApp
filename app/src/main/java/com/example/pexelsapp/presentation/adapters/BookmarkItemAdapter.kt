@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pexelsapp.data.models.DBPhoto
 import com.example.pexelsapp.databinding.ImageBookmarkItemBinding
-import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.presentation.adapters.viewHolders.BookmarkItemViewHolder
-import javax.inject.Inject
 
 class BookmarkItemAdapter() :
     RecyclerView.Adapter<BookmarkItemViewHolder>() {

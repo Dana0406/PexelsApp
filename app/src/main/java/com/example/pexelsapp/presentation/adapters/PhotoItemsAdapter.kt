@@ -3,7 +3,6 @@ package com.example.pexelsapp.presentation.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.pexelsapp.R
@@ -47,6 +46,4 @@ class PhotoItemsAdapter() :
         }
     }
 }
-
-
 

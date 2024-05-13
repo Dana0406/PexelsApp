@@ -1,5 +1,6 @@
 package com.example.pexelsapp.presentation.fragments
 
+import android.graphics.drawable.Drawable
 import com.example.pexelsapp.data.ImageDownloader
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.pexelsapp.R
 import com.example.pexelsapp.databinding.FragmentDetailsBinding
 import com.example.pexelsapp.presentation.converters.ModelConverter
@@ -30,8 +35,10 @@ class DetailsFragment : Fragment() {
     private val args: DetailsFragmentArgs by navArgs()
     private val detailsMvvm: DetailsViewModel by viewModels()
     private var photoToSave: Photo? = null
+
     @Inject
     lateinit var imageDownloader: ImageDownloader
+
     @Inject
     lateinit var downloadImageUseCase: DownloadImageUseCase
 
@@ -55,6 +62,13 @@ class DetailsFragment : Fragment() {
         onDownloadClicked()
         onBookmarkClicked()
         onBackClicked()
+        onExploreClicked()
+    }
+
+    private fun onExploreClicked() {
+        binding.exploreTextView.setOnClickListener {
+            navigateTo(R.id.action_detailsFragment2_to_homeFragment22)
+        }
     }
 
     private fun onBackClicked() {
@@ -121,15 +135,31 @@ class DetailsFragment : Fragment() {
             binding.addToBookmarkButton.setImageResource(R.drawable.bookmark_button_active)
         }
 
-        if (photo != null) {
-            Glide.with(binding.photoImageView)
-                .load(photo)
-                .into(binding.photoImageView)
-        } else {
-            photoIsNotFound()
-        }
+        Glide.with(binding.photoImageView)
+            .load(photo)
+            .addListener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    photoIsNotFound()
+                    return false
+                }
 
-        binding.nameSurname.text = photographer
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.nameSurname.text = photographer
+                    return false
+                }
+            })
+            .into(binding.photoImageView)
     }
 
     private fun observePhotoDetailsLiveData() {
@@ -143,10 +173,14 @@ class DetailsFragment : Fragment() {
     }
 
     private fun photoIsNotFound() {
-        binding.noResultsFoundTextView.visibility = View.VISIBLE
-        binding.exploreTextView.visibility = View.VISIBLE
-        loadingCase()
-        binding.progressBar.visibility = View.INVISIBLE
+        with(binding){
+            noResultsFoundTextView.visibility = View.VISIBLE
+            exploreTextView.visibility = View.VISIBLE
+            progressBar.visibility = View.INVISIBLE
+            nameSurname.visibility = View.INVISIBLE
+            downloadButton.visibility = View.INVISIBLE
+            addToBookmarkButton.visibility = View.INVISIBLE
+        }
     }
 
     private fun loadingCase() {

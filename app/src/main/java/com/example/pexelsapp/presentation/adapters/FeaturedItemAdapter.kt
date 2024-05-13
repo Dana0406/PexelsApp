@@ -7,7 +7,6 @@ import com.example.pexelsapp.databinding.FeaturedItemBinding
 import com.example.pexelsapp.domain.models.Featured
 import com.example.pexelsapp.presentation.adapters.viewHolders.FeaturedItemViewHolder
 import java.lang.Integer.min
-import javax.inject.Inject
 
 class FeaturedItemAdapter() :
     RecyclerView.Adapter<FeaturedItemViewHolder>() {

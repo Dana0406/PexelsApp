@@ -1,7 +1,6 @@
 package com.example.pexelsapp.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,14 +11,11 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pexelsapp.R
 import com.example.pexelsapp.data.models.DBPhoto
-import com.example.pexelsapp.databinding.ActivityMainBinding
 import com.example.pexelsapp.databinding.FragmentBookmarksBinding
-import com.example.pexelsapp.domain.models.Photo
 import com.example.pexelsapp.presentation.adapters.BookmarkItemAdapter
 import com.example.pexelsapp.presentation.utils.Constants
 import com.example.pexelsapp.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class BookmarksFragment : Fragment() {

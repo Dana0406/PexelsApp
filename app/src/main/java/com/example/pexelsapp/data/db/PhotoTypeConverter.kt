@@ -5,7 +5,6 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.pexelsapp.domain.models.PhotoSource
 import com.google.gson.Gson
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @TypeConverters

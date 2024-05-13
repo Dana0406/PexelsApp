@@ -46,6 +46,7 @@ class DetailsViewModel @Inject constructor(
                 }
             } catch (e: IOException) {
                 Log.d("DetailFragment", e.message.toString())
+                photoDetailLiveData.postValue(null)
             }
         }
     }
